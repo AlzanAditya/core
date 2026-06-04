@@ -1,0 +1,560 @@
+/**
+ * pages/ai.css — AI Mode Premium Stylesheet
+ * Fully-featured visual system for prompt container, structured card output, and sticky action bar.
+ */
+
+/* ============================================
+   AI PROMPT CONTAINER
+   ============================================ */
+.ai-prompt-container {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 20px;
+    box-shadow: var(--shadow-sm);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+}
+
+.ai-prompt-textarea {
+    width: 100%;
+    min-height: 80px;
+    max-height: 400px;
+    background: transparent;
+    border: none;
+    resize: none;
+    color: var(--text-main);
+    font-size: 0.75rem;
+    line-height: 1.1;
+    font-weight: 400;
+    padding: 4px;
+    font-family: inherit;
+    outline: none;
+    transition: height 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.ai-prompt-textarea:focus {
+    box-shadow: none !important;
+    border: none !important;
+}
+
+/* Height states for prompt resize */
+.ai-prompt-textarea.minimized {
+    height: 90px !important;
+    min-height: 90px !important;
+}
+
+.ai-prompt-textarea.maximized {
+    height: 240px !important;
+}
+
+/* Actions bar under prompt */
+.ai-prompt-actions-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 10px;
+    margin-top: 4px;
+}
+
+.ai-prompt-actions-left,
+.ai-prompt-actions-right {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* Model selector in prompt actions */
+.ai-model-select {
+    position: relative;
+}
+
+.ai-model-select .select-selected {
+    padding: 6px 12px !important;
+    font-size: 0.8rem !important;
+    font-weight: 600 !important;
+    border-radius: 50px !important;
+    background: rgba(255, 255, 255, 0.05) !important;
+    border: 1px solid var(--border-color) !important;
+    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+    min-height: auto !important;
+    height: 30px !important;
+}
+
+.ai-model-select .select-items {
+    position: absolute;
+    top: calc(100% + 6px);
+    left: 0;
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-sm);
+    box-shadow: var(--shadow-md);
+    z-index: 100;
+    min-width: 140px;
+    padding: 4px;
+}
+
+.ai-model-select .select-items div {
+    padding: 8px 12px;
+    cursor: pointer;
+    font-size: 0.8rem;
+    border-radius: 4px;
+    color: var(--text-main);
+}
+
+.ai-model-select .select-items div:hover {
+    background: rgba(255, 255, 255, 0.08);
+    color: var(--primary);
+}
+
+/* ============================================
+   AI CARDS LAYOUT & ALIGNMENT
+   ============================================ */
+.ai-output-container {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 16px;
+    margin-bottom: 80px;
+    /* space for sticky bar */
+}
+
+@media (min-width: 768px) {
+    .ai-output-container {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+.ai-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    position: relative;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: var(--shadow-sm);
+    cursor: pointer;
+}
+
+/* Selected state glow */
+.ai-card.is-selected {
+    border: 2px solid var(--primary) !important;
+    box-shadow: 0 0 16px rgba(245, 166, 35, 0.25), var(--shadow-md) !important;
+}
+
+/* Card Header */
+.ai-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px dashed var(--border-color);
+    padding-bottom: 8px;
+    margin-bottom: 4px;
+}
+
+.ai-card-title-input {
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid transparent;
+    color: var(--text-main);
+    font-weight: 700;
+    font-size: 1rem;
+    width: 100%;
+    outline: none;
+    padding: 2px 0;
+    transition: border-bottom 0.2s;
+}
+
+.ai-card-title-input:focus {
+    border-bottom: 1px solid var(--primary);
+}
+
+/* CSS Grid/Flex alignment system for form items */
+.ai-card-body {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    transition: max-height 0.25s ease-out, opacity 0.2s;
+    overflow: hidden;
+}
+
+.ai-card-body.collapsed {
+    max-height: 0 !important;
+    opacity: 0;
+    pointer-events: none;
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
+.ai-item-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+}
+
+.ai-field-label {
+    width: 55px;
+    flex-shrink: 0;
+    font-size: 0.6rem;
+    font-weight: 400;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.ai-field-value-wrap {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    position: relative;
+}
+
+.ai-field-input {
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid var(--border-color);
+    color: var(--text-main);
+    font-size: 0.88rem;
+    width: 100%;
+    outline: none;
+    padding: 4px 0;
+    transition: border-bottom 0.2s;
+    font-family: inherit;
+}
+
+.ai-field-input:focus {
+    border-bottom: 1px solid var(--primary) !important;
+}
+
+
+.line-required-empty-orange {
+    border-bottom: 2px solid var(--tertiary) !important;
+}
+
+
+/* Multi-field rows (tipe + item, qty + harga) */
+.ai-item-split-row {
+    display: flex;
+    width: 100%;
+    gap: 16px;
+}
+
+.ai-item-split-col {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 0;
+}
+
+.ai-field-label-sub {
+    width: 50px;
+    flex-shrink: 0;
+    font-size: 0.6rem;
+    font-weight: 400;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+/* Variable states: Empty vs Filled */
+.required-empty-orange {
+    color: #e67e22 !important;
+    border-bottom: 1px solid #e67e22 !important;
+}
+
+/* Custom select inside AI card */
+.ai-card .custom-select {
+    flex: 1;
+    position: relative;
+    min-width: 0;
+}
+
+.ai-card .select-selected {
+    border: none;
+    border-bottom: 1px solid var(--border-color);
+    background: transparent;
+    border-radius: 0;
+    padding: 4px 0;
+    font-size: 0.88rem;
+    min-height: auto;
+    color: var(--text-main);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+}
+
+/* Flexible Catatan Textarea */
+.ai-note-textarea {
+    resize: none;
+    overflow: hidden;
+    min-height: 28px;
+    max-height: 200px;
+    padding: 4px 0;
+    line-height: 1.4;
+}
+
+/* ============================================
+   AI CARD BOTTOM ACTIONS
+   ============================================ */
+.ai-card-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px dashed var(--border-color);
+    padding-top: 10px;
+    margin-top: 4px;
+}
+
+/* Hide card actions completely in Select Mode */
+.select-mode-active .ai-card-actions {
+    display: none !important;
+}
+
+.ai-card-actions-left,
+.ai-card-actions-right {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.ai-card-actions-left .btn-delete-card {
+    background: transparent;
+    border: none;
+    color: #ff4d4f;
+    cursor: pointer;
+    padding: 6px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s;
+}
+
+.ai-card-actions-left .btn-delete-card:hover {
+    background: rgba(255, 77, 79, 0.1);
+}
+
+.ai-card-actions-right .btn-card-action {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--border-color);
+    color: var(--text-main);
+    cursor: pointer;
+    padding: 6px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+}
+
+.ai-card-actions-right .btn-card-action:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--primary);
+    border-color: var(--primary);
+}
+
+.ai-card-actions-right .btn-card-action.active-collapse {
+    transform: rotate(90deg);
+}
+
+/* Selection checkmark icon overlay on top-right of card in select mode */
+.ai-card-select-overlay {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: 1.5px solid var(--border-color);
+    background: rgba(0, 0, 0, 0.4);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 5;
+    transition: all 0.2s;
+}
+
+.select-mode-active .ai-card-select-overlay {
+    display: flex;
+}
+
+.ai-card.is-selected .ai-card-select-overlay {
+    background: var(--primary);
+    border-color: var(--primary);
+    color: white;
+}
+
+.ai-card.is-selected .ai-card-select-overlay::after {
+    content: '✓';
+    font-size: 0.75rem;
+    font-weight: bold;
+}
+
+/* ============================================
+   AI PROMPT CONTAINER GLOW EFFECT & BUTTON
+   ============================================ */
+@property --b {
+    syntax: '<length>';
+    inherits: false;
+    initial-value: 14px
+}
+
+@keyframes ani-ai-prompt-container {
+    0% {
+        --c-0: hsla(92, 100%, 74%, 1);
+        --s-start-0: 10%;
+        --s-end-0: 30%;
+        --x-0: 1%;
+        --y-0: 1%;
+        --b: 14px;
+    }
+
+    25% {
+        --c-0: hsla(76, 100%, 93%, 1);
+        --s-start-0: 10%;
+        --s-end-0: 30%;
+        --x-0: 99%;
+        --y-0: 1%;
+        --b: 14px;
+    }
+
+    50% {
+        --c-0: hsla(127, 100%, 88%, 1);
+        --s-start-0: 10%;
+        --s-end-0: 30%;
+        --x-0: 99%;
+        --y-0: 99%;
+        --b: 14px;
+    }
+
+    75% {
+        --c-0: hsla(177, 72%, 93%, 1);
+        --s-start-0: 10%;
+        --s-end-0: 30%;
+        --x-0: 1%;
+        --y-0: 99%;
+        --b: 14px;
+    }
+
+    100% {
+        --c-0: hsla(195, 100%, 77%, 1);
+        --s-start-0: 10%;
+        --s-end-0: 30%;
+        --x-0: 1%;
+        --y-0: 1%;
+        --b: 14px;
+    }
+}
+
+.ai-prompt-container::after {
+    content: "";
+    position: absolute;
+    inset: -2px;
+    z-index: -1;
+    --c-0: hsla(92, 100%, 74%, 1);
+    --x-0: 1%;
+    --y-0: 1%;
+    background-color: hsla(0, 0%, 0%, 0);
+    background-image: radial-gradient(circle at var(--x-0) var(--y-0), var(--c-0) var(--s-start-0), transparent var(--s-end-0));
+    animation: ani-ai-prompt-container 5s linear infinite normal;
+    filter: blur(var(--b));
+    background-blend-mode: normal;
+    will-change: transform, opacity;
+    contain: paint;
+    border-radius: calc(var(--radius-md) + 2px);
+}
+
+/* AI Generate Button Circular Mesh Styling */
+#btn-ai-generate {
+    width: 40px !important;
+    height: 40px !important;
+    border-radius: 50% !important;
+    padding: 0 !important;
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    position: relative;
+    border: 1.5px solid var(--bg-card) !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1) !important;
+    cursor: pointer;
+    font-size: 0 !important;
+    /* Hide the text "Generate" */
+    color: #444444 !important;
+    overflow: hidden;
+
+    /* Animated Mesh Gradient Styles identical to tab-btn-ai */
+    --c-0: hsla(190, 100%, 88%, 0.66);
+    --y-0: 11%;
+    --x-0: 91%;
+    --c-1: hsla(136, 100%, 88%, 1);
+    --x-1: 69.11764778558965%;
+    --y-1: 54.30547154879501%;
+    --c-2: hsla(280, 64%, 64%, 1);
+    --y-2: 87%;
+    --x-2: 36%;
+    background-color: hsla(0, 0%, 100%, 0.77) !important;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 623 623' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E"), radial-gradient(circle at var(--x-0) var(--y-0), var(--c-0) var(--s-start-0), transparent var(--s-end-0)), radial-gradient(circle at var(--x-1) var(--y-1), var(--c-1) var(--s-start-1), transparent var(--s-end-1)), radial-gradient(circle at var(--x-2) var(--y-2), var(--c-2) var(--s-start-2), transparent var(--s-end-2)) !important;
+    animation: ani-tab-btn-ai 2s linear infinite alternate;
+    background-blend-mode: overlay, normal, normal, normal;
+    will-change: transform, opacity;
+    contain: paint;
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+#btn-ai-generate:hover {
+    transform: scale(1.08);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15) !important;
+}
+
+#btn-ai-generate:active {
+    transform: scale(0.95);
+}
+
+#btn-ai-generate i-ui {
+    color: #444444 !important;
+    margin: 0 !important;
+    /* Remove the right margin entirely */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+}
+
+/* While generating (loading / disabled) */
+#btn-ai-generate:disabled {
+    animation: ani-tab-btn-ai 0.8s linear infinite alternate !important;
+    opacity: 0.8 !important;
+    transform: scale(1.05);
+}
+
+/* Centering AI prompt container when no AI cards are generated */
+#ai-view.active.is-empty {
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: center !important;
+    align-items: center !important;
+    min-height: calc(75vh - 100px) !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+}
+
+#ai-view.active.is-empty .ai-prompt-container {
+    width: 100% !important;
+    max-width: 500px !important;
+    margin: auto !important;
+}

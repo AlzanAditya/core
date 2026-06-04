@@ -1,0 +1,1442 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Berkah Maju Elektrik - Generator</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Dynamic CDN Asset Loader (Local Dev vs Production Subdomain) -->
+    <script>
+        (function () {
+            const isLocal = window.location.hostname === 'localhost' ||
+                window.location.hostname === '127.0.0.1' ||
+                window.location.protocol === 'file:';
+
+            const cdnBase = isLocal ? '../../cdn' : 'https://cdn.zanxa.studio';
+
+            // 1. Inject Preload Icon Bundle JSON
+            const preloadLink = document.createElement('link');
+            preloadLink.rel = 'preload';
+            preloadLink.href = cdnBase + '/icons/untitled-ui-line.v1.json';
+            preloadLink.as = 'fetch';
+            preloadLink.crossOrigin = 'anonymous';
+            document.head.appendChild(preloadLink);
+
+            // 2. Inject Universal Web Component Icon System Script
+            const scriptEl = document.createElement('script');
+            scriptEl.src = cdnBase + '/js/i-ui.js';
+            scriptEl.defer = true;
+            document.head.appendChild(scriptEl);
+        })();
+    </script>
+
+    <!-- html-to-image Library -->
+    <script src="https://cdn.jsdelivr.net/npm/html-to-image@1.11.11/dist/html-to-image.min.js"></script>
+
+    <!-- Styles — modular CSS architecture -->
+    <link rel="stylesheet" href="css/variables.css">
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/layout.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/theme.css">
+    <link rel="stylesheet" href="css/glass-ui.css">
+    <link rel="stylesheet" href="css/desktop-ui.css">
+    <link rel="stylesheet" href="css/icon-compatibility.css">
+    <link rel="stylesheet" href="css/label-visibility.css">
+    <!-- Feature pages -->
+    <link rel="stylesheet" href="css/pages/dashboard.css">
+    <link rel="stylesheet" href="css/pages/manual.css">
+    <link rel="stylesheet" href="css/pages/ai.css">
+    <link rel="stylesheet" href="css/pages/ai-multimodal.css">
+    <link rel="stylesheet" href="css/pages/history.css">
+    <link rel="stylesheet" href="css/pages/finance.css">
+    <link rel="stylesheet" href="css/pages/settings.css">
+
+    <!-- Manifest -->
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" type="image/png" sizes="32x32" href="assets/icons/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="assets/icons/favicon-16x16.png">
+    <link rel="shortcut icon" href="assets/icons/favicon.ico">
+    <link rel="apple-touch-icon" sizes="180x180" href="assets/icons/apple-touch-icon.png">
+    <meta name="theme-color" content="#4A90E2">
+</head>
+
+<body>
+
+    <!-- App Header (Mobile Only) -->
+    <header class="app-header">
+        <div class="brand" id="header-brand-container">
+            <div class="logo-container" id="header-logo-container">
+                <img id="header-logo-img" src="assets/icons/logo-bme.png" alt="Logo" class="app-logo"
+                    onerror="this.style.display='none'">
+                <div id="header-logo-placeholder"
+                    style="display:none; width:100%; height:100%; align-items:center; justify-content:center; color:#fff; font-size:1.1rem; font-weight:700; background:linear-gradient(135deg, var(--primary), var(--secondary)); border-radius:50%;">
+                    G</div>
+            </div>
+            <div class="brand-text">
+                <h1 id="header-welcome-title">BERKAH MAJU ELEKTRIK</h1>
+                <p id="header-welcome-sub">Invoice & Surat Jalan</p>
+            </div>
+        </div>
+        <h1 id="header-page-title"
+            style="display:none; font-size:1.15rem; font-weight:700; color:var(--text-main); margin:0; text-transform:capitalize; text-align:left; flex:1;">
+        </h1>
+        <div style="display:flex;align-items:center;gap:4px;">
+            <button id="btn-label-toggle" class="icon-btn" title="Sembunyikan / Tampilkan Label">
+                <span id="wrap-icon-eye"><i-ui name="eye" size="20"></i-ui></span>
+                <span id="wrap-icon-eye-closed" style="display:none"><i-ui name="eye-off" size="20"></i-ui></span>
+            </button>
+            <button id="btn-settings" class="icon-btn">
+                <i-ui name="settings-01" size="22"></i-ui>
+            </button>
+        </div>
+    </header>
+
+    <!-- Tab Navigation (Mobile Only) -->
+    <nav class="tab-nav">
+        <button class="tab-btn active" data-tab="dashboard">
+            <i-ui name="home-line" size="20"></i-ui>
+            <span>Beranda</span>
+        </button>
+        <button class="tab-btn" data-tab="manual">
+            <i-ui name="file-02" size="20"></i-ui>
+            <span>Manual</span>
+        </button>
+        <div class="tab-btn-ai-wrapper">
+            <button class="tab-btn tab-btn-ai" data-tab="ai" title="AI Mode">
+                <i-ui name="star-04" size="22"></i-ui>
+            </button>
+        </div>
+        <button class="tab-btn" data-tab="finance">
+            <i-ui name="bar-line-chart" size="20"></i-ui>
+            <span>Keuangan</span>
+        </button>
+        <button class="tab-btn" data-tab="history">
+            <i-ui name="hourglass-02" size="20"></i-ui>
+            <span>Histori</span>
+        </button>
+    </nav>
+
+    <!-- Primary App Container Grid System (Desktop structure) -->
+    <div class="app-container">
+
+        <!-- DESKTOP SIDEBAR -->
+        <aside class="desktop-sidebar">
+            <div class="sidebar-brand">
+                <i-ui name="activity" size="24"
+                    style="color:var(--primary); filter: drop-shadow(0 0 8px var(--primary));"></i-ui>
+                <div class="sidebar-brand-text">
+                    <h2>flowa.id</h2>
+                </div>
+            </div>
+            <div class="sidebar-menu">
+                <button class="sidebar-item glass-btn active" data-tab="dashboard">
+                    <i-ui name="home-line" size="20"></i-ui>
+                    <span>Beranda</span>
+                </button>
+                <button class="sidebar-item glass-btn" data-tab="manual">
+                    <i-ui name="file-02" size="20"></i-ui>
+                    <span>Manual</span>
+                </button>
+                <button class="sidebar-item glass-btn" data-tab="ai">
+                    <i-ui name="star-06" size="20"></i-ui>
+                    <span>AI</span>
+                </button>
+                <button class="sidebar-item glass-btn" data-tab="finance">
+                    <i-ui name="bar-line-chart" size="20"></i-ui>
+                    <span>Keuangan</span>
+                </button>
+                <button class="sidebar-item glass-btn" data-tab="history">
+                    <i-ui name="hourglass-02" size="20"></i-ui>
+                    <span>Histori</span>
+                </button>
+            </div>
+            <div class="sidebar-bottom">
+                <button class="sidebar-item glass-btn" id="btn-sidebar-settings"
+                    style="width:100%; border:none; background:transparent;">
+                    <i-ui name="settings-01" size="20"></i-ui>
+                    <span>Pengaturan</span>
+                </button>
+                <div class="sidebar-profile">
+                    <i-ui name="user-01" size="20"></i-ui>
+                    <span>Berkah Maju Elektrik</span>
+                </div>
+            </div>
+        </aside>
+
+        <!-- WORKSPACE CONTAINER -->
+        <div class="workspace-container">
+
+            <!-- CHROME TABS BAR -->
+            <div class="chrome-tabs-bar">
+                <button class="sidebar-toggle-btn" id="btn-sidebar-toggle" title="Kecilkan/Besarkan Sidebar">
+                    <i-ui name="flex-align-left" size="20"></i-ui>
+                </button>
+                <div id="chrome-tabs-list" style="display:flex; align-items:flex-end;">
+                    <!-- Dynamically injected tabs -->
+                </div>
+                <button class="btn-add-tab" id="btn-add-tab-chrome" title="Tambah Tab Baru">
+                    <i-ui name="plus" size="18"></i-ui>
+                </button>
+            </div>
+
+            <!-- Workspace Header (Unified Judul + Toolbar) -->
+            <div class="workspace-header">
+                <div class="workspace-title-wrap">
+                    <div class="workspace-title-label">JUDUL</div>
+                    <input type="text" id="manual-title-desktop" class="workspace-title-input glass-input"
+                        placeholder="Contoh: Invoice #001">
+                </div>
+                <div class="workspace-header-toolbar">
+                    <button class="toolbar-toggle" id="btn-toolbar-toggle" title="Kecilkan/Besarkan Toolbar">
+                        <i-ui name="chevron-right" size="16"></i-ui>
+                    </button>
+                    <div class="toolbar-content">
+                        <!-- Pill 1: Tampilan (Tabel / Kartu) -->
+                        <div class="toolbar-dropdown-pill" id="pill-tampilan">
+                            <button class="pill-trigger">
+                                <i-ui name="list" size="14"></i-ui>
+                                <span>Tabel</span>
+                            </button>
+                            <div class="pill-dropdown-menu">
+                                <button class="pill-dropdown-item" id="opt-view-card" data-value="card">
+                                    <i-ui name="layout-grid-01" size="14"></i-ui>
+                                    <span>Kartu</span>
+                                </button>
+                                <button class="pill-dropdown-item" id="opt-view-table" data-value="table">
+                                    <i-ui name="list" size="14"></i-ui>
+                                    <span>Tabel</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Pill 2: Label/Mode (detail / sederhana) -->
+                        <div class="toolbar-dropdown-pill" id="pill-label">
+                            <button class="pill-trigger">
+                                <i-ui name="eye" size="14"></i-ui>
+                                <span>detail</span>
+                            </button>
+                            <div class="pill-dropdown-menu">
+                                <button class="pill-dropdown-item" id="opt-label-detail" data-value="detail">
+                                    <i-ui name="eye" size="14"></i-ui>
+                                    <span>detail</span>
+                                </button>
+                                <button class="pill-dropdown-item" id="opt-label-sederhana" data-value="sederhana">
+                                    <i-ui name="eye-off" size="14"></i-ui>
+                                    <span>sederhana</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Pill 3: Tema (Gelap / Terang / Sistem) -->
+                        <div class="toolbar-dropdown-pill" id="pill-tema">
+                            <button class="pill-trigger">
+                                <i-ui name="moon-01" size="14"></i-ui>
+                                <span>Gelap</span>
+                            </button>
+                            <div class="pill-dropdown-menu">
+                                <button class="pill-dropdown-item" id="opt-theme-dark" data-value="dark">
+                                    <i-ui name="moon-01" size="14"></i-ui>
+                                    <span>Gelap</span>
+                                </button>
+                                <button class="pill-dropdown-item" id="opt-theme-light" data-value="light">
+                                    <i-ui name="sun" size="14"></i-ui>
+                                    <span>Terang</span>
+                                </button>
+                                <button class="pill-dropdown-item" id="opt-theme-system" data-value="system">
+                                    <i-ui name="monitor-02" size="14"></i-ui>
+                                    <span>Sistem</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Workspace Body Wrapper (Holds Main Panels & Collapsible Right Preview Panel) -->
+            <div class="workspace-body-wrapper">
+
+                <!-- Main Content Area -->
+                <main id="app-content">
+
+                    <!-- MODE 0: DASHBOARD -->
+                    <section id="dashboard-view" class="view client-view active">
+
+
+                        <!-- Bento Grid for Stats -->
+                        <div class="dashboard-bento-grid" style="margin-bottom: 24px;">
+                            <!-- Bento Card 1: Keuangan Stats -->
+                            <div class="dashboard-bento-card glass-panel highlight-purple">
+                                <div class="card-header-icon">
+                                    <i-ui name="bar-line-chart" size="20"></i-ui>
+                                </div>
+                                <div class="stats-label">Total Omset Bisnis</div>
+                                <div class="stats-value" id="dashboard-total-revenue">Rp 0</div>
+
+                                <div class="target-progress-container" style="margin-top: 12px; width: 100%;">
+                                    <div
+                                        style="display:flex; justify-content:space-between; font-size:0.75rem; color:var(--text-muted); margin-bottom:4px;">
+                                        <span>Target Bulanan</span>
+                                        <span id="dashboard-target-percent">0%</span>
+                                    </div>
+                                    <div class="dashboard-progress-bar-bg"
+                                        style="width: 100%; height: 6px; background: rgba(255,255,255,0.06); border-radius: 10px; overflow: hidden; border: 1px solid rgba(255,255,255,0.05);">
+                                        <div id="dashboard-target-progress" class="dashboard-progress-bar-fill"
+                                            style="width: 0%; height: 100%; background: linear-gradient(90deg, var(--primary), var(--secondary)); border-radius: 10px; transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);">
+                                        </div>
+                                    </div>
+                                    <div style="text-align: right; font-size: 0.7rem; color: var(--text-muted); margin-top: 6px;"
+                                        id="dashboard-target-val">Target: Rp 0</div>
+                                </div>
+                            </div>
+
+                            <!-- Bento Card 2: Dokumen Stats -->
+                            <div class="dashboard-bento-card glass-panel">
+                                <div class="card-header-icon">
+                                    <i-ui name="file-02" size="20"></i-ui>
+                                </div>
+                                <div class="stats-grid"
+                                    style="display:grid; grid-template-columns:1fr 1fr; gap:12px; width: 100%;">
+                                    <div>
+                                        <div class="stats-label" style="font-size: 0.7rem;">Riwayat</div>
+                                        <div class="stats-value" id="dashboard-total-history"
+                                            style="font-size: 1.6rem;">0</div>
+                                    </div>
+                                    <div>
+                                        <div class="stats-label" style="font-size: 0.7rem;">Template</div>
+                                        <div class="stats-value" id="dashboard-total-templates"
+                                            style="font-size: 1.6rem;">0</div>
+                                    </div>
+                                </div>
+                                <div
+                                    style="display:flex; align-items:center; gap:6px; font-size:0.75rem; color:var(--text-muted); margin-top: 14px;">
+                                    <i-ui name="check-circle" size="14" style="color: var(--finance-green);"></i-ui>
+                                    <span id="dashboard-active-tab-desc">Semua tab berjalan normal.</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Shortcut Menu Section -->
+                        <h3 class="dashboard-section-title"
+                            style="margin-top: 8px; margin-bottom: 12px; font-size: 0.85rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;">
+                            Aksi Cepat &amp; Pintar</h3>
+                        <div class="dashboard-shortcuts-container">
+                            <!-- Shortcut Manual -->
+                            <button class="shortcut-item glass-panel hover-glow" data-shortcut="manual"
+                                style="margin-bottom: 8px;">
+                                <div class="shortcut-icon"
+                                    style="background: linear-gradient(135deg, rgba(74,144,226,0.15), rgba(74,144,226,0.05)); border-color: rgba(74,144,226,0.25);">
+                                    <i-ui name="file-02" size="20" style="color: #4A90E2;"></i-ui>
+                                </div>
+                                <div class="shortcut-text">
+                                    <h4>Generator Manual</h4>
+                                    <p>Buat invoice &amp; surat jalan secara konvensional langkah demi langkah.</p>
+                                </div>
+                                <i-ui name="chevron-right" size="16" class="arrow-icon"></i-ui>
+                            </button>
+
+                            <!-- Shortcut AI -->
+                            <button class="shortcut-item glass-panel hover-glow" data-shortcut="ai"
+                                style="border: 1px solid rgba(155, 81, 224, 0.25); margin-bottom: 8px;">
+                                <div class="shortcut-icon"
+                                    style="background: linear-gradient(135deg, rgba(155,81,224,0.15), rgba(155,81,224,0.05)); border-color: rgba(155,81,224,0.25);">
+                                    <i-ui name="star-04" size="20" style="color: #9B51E0;"></i-ui>
+                                </div>
+                                <div class="shortcut-text">
+                                    <h4>Ekstraktor Pintar AI</h4>
+                                    <p>Salin teks mentah/faktur, biarkan kecerdasan buatan menyusun data Anda otomatis.
+                                    </p>
+                                </div>
+                                <i-ui name="chevron-right" size="16" class="arrow-icon"></i-ui>
+                            </button>
+
+                            <!-- Shortcut Finance -->
+                            <button class="shortcut-item glass-panel hover-glow" data-shortcut="finance"
+                                style="margin-bottom: 8px;">
+                                <div class="shortcut-icon"
+                                    style="background: linear-gradient(135deg, rgba(39,174,96,0.15), rgba(39,174,96,0.05)); border-color: rgba(39,174,96,0.25);">
+                                    <i-ui name="bar-line-chart" size="20" style="color: #27ae60;"></i-ui>
+                                </div>
+                                <div class="shortcut-text">
+                                    <h4>Laporan Keuangan</h4>
+                                    <p>Analisis tren pendapatan, monitoring target bulanan, dan evaluasi grafik omset.
+                                    </p>
+                                </div>
+                                <i-ui name="chevron-right" size="16" class="arrow-icon"></i-ui>
+                            </button>
+
+                            <!-- Shortcut History -->
+                            <button class="shortcut-item glass-panel hover-glow" data-shortcut="history"
+                                style="margin-bottom: 8px;">
+                                <div class="shortcut-icon"
+                                    style="background: linear-gradient(135deg, rgba(230,126,34,0.15), rgba(230,126,34,0.05)); border-color: rgba(230,126,34,0.25);">
+                                    <i-ui name="hourglass-02" size="20" style="color: #e67e22;"></i-ui>
+                                </div>
+                                <div class="shortcut-text">
+                                    <h4>Pencarian Riwayat</h4>
+                                    <p>Cari, cetak ulang, ekspor, atau edit kembali invoice &amp; surat jalan terdahulu.
+                                    </p>
+                                </div>
+                                <i-ui name="chevron-right" size="16" class="arrow-icon"></i-ui>
+                            </button>
+
+                            <!-- Shortcut Settings -->
+                            <button class="shortcut-item glass-panel hover-glow" data-shortcut="settings">
+                                <div class="shortcut-icon"
+                                    style="background: rgba(255,255,255,0.03); border-color: rgba(255,255,255,0.05);">
+                                    <i-ui name="settings-01" size="20" style="color: var(--text-muted);"></i-ui>
+                                </div>
+                                <div class="shortcut-text">
+                                    <h4>Pengaturan Sistem</h4>
+                                    <p>Kelola format nama berkas, ubah bahasa, prompt default AI, dan data administrasi.
+                                    </p>
+                                </div>
+                                <i-ui name="chevron-right" size="16" class="arrow-icon"></i-ui>
+                            </button>
+                        </div>
+                    </section>
+
+                    <!-- MODE 1: MANUAL -->
+                    <section id="manual-view" class="view client-view hidden">
+                        <div class="input-group item-field-wrap">
+                            <label class="field-label">Judul Invoice</label>
+                            <input type="text" id="manual-title" class="form-input title"
+                                placeholder="Contoh: Invoice #001">
+                        </div>
+
+                        <div style="display:flex; justify-content:flex-end; align-items: center;">
+                            <div class="view-toggle-container"
+                                style="display:flex; justify-content:space-between; align-items:center; width:100%;">
+                                <!-- Tampilan (List & Table View) -->
+                                <div style="display:flex; align-items:center; gap:8px;">
+                                    <span class="view-label" style="margin:0;">Tampilan</span>
+                                    <div class="toggle-group orange-theme">
+                                        <button class="toggle-btn active" id="view-card-btn" title="Card View">
+                                            <i-ui name="list" size="15"></i-ui>
+                                        </button>
+                                        <button class="toggle-btn" id="view-table-btn" title="Table View">
+                                            <i-ui name="layout-grid-01" size="15"></i-ui>
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <div
+                                    style="width: 100px; height: 1px; background-color: var(--border-color); margin: 0 4px;">
+                                </div>
+
+                                <!-- Mode (Simple & Advance Card Mode) -->
+                                <div style="display:flex; align-items:center; gap:8px;">
+                                    <span class="view-label" style="margin:0;">Mode</span>
+                                    <div class="toggle-group orange-theme">
+                                        <button class="toggle-btn active" id="mode-simple-btn" title="Simple Mode">
+                                            <i-ui name="square" size="15"></i-ui>
+                                        </button>
+                                        <button class="toggle-btn" id="mode-advance-btn" title="Advance Mode">
+                                            <i-ui name="grid-01" size="15"></i-ui>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="manual-items-wrapper" style="position:relative;">
+                            <div id="manual-edit-overlay" class="hidden"
+                                style="position:absolute; top:0; left:0; width:100%; height:100%; background:rgba(255,255,255,0.8); z-index:10; display:none; flex-direction:column; justify-content:center; align-items:center; border:2px dashed #f39c12; border-radius:8px;">
+                                <i-ui name="alert-triangle" size="48" style="color:#f39c12; margin-bottom:15px"></i-ui>
+                                <h3 style="color:#d35400;">Mode Edit Manual Aktif</h3>
+                                <p style="text-align:center; padding:10px; font-weight:600; color:#333;">Input otomatis
+                                    dinonaktifkan<br>karena ada perubahan kustom.</p>
+                                <button id="btn-reset-manual-edit" class="btn btn-primary"
+                                    style="background:#e67e22; border-color:#d35400; margin-top:10px;">
+                                    <i-ui name="refresh-ccw-01" size="14"></i-ui> Reset &amp;
+                                    Lanjutkan Otomatis
+                                </button>
+                            </div>
+                            <div id="manual-items-container">
+                                <!-- Items will be injected here -->
+                            </div>
+
+                            <div class="mobile-add-group" style="display: flex; gap: 8px; align-items: stretch;">
+                                <button id="btn-add-item" class="btn btn-outline" style="flex: 1;">
+                                    <i-ui name="plus" size="15"></i-ui> Tambah Item
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- ACTION BAR FLOATING (Mobile + Desktop) -->
+                        <div id="manual-action-bar" class="action-bar-sticky">
+                            <!-- Floating Required Fields Indicator -->
+                            <div id="required-fields-indicator" class="floating-indicator hidden">
+                                <div class="indicator-badge">0</div>
+                                <span>Data Kosong</span>
+                            </div>
+
+                            <!-- MOBILE: total + buttons -->
+                            <div class="mobile-action-content">
+                                <div class="total-display">
+                                    <small>Total</small>
+                                    <span id="grand-total-mobile">Rp 0</span>
+                                </div>
+                                <div style="display:flex; gap:8px; align-items:center; position:relative;">
+                                    <button id="btn-save-only-mobile" class="btn btn-outline"
+                                        style="border-width:2px; font-weight:600;">
+                                        Simpan
+                                    </button>
+                                    <div class="download-split-btn">
+                                        <button id="btn-download-mobile" class="btn btn-primary btn-lg"
+                                            style="border-radius: 50px 0 0 50px; border-right: 1px solid rgba(255,255,255,0.15);">
+                                            Unduh
+                                        </button>
+                                        <button id="btn-download-split-arrow-mobile" class="split-arrow"
+                                            title="Format Ekspor Lainnya" style="border-radius: 0 50px 50px 0;">
+                                            <i-ui name="chevron-up" size="14"></i-ui>
+                                        </button>
+                                        <div class="glass-dropdown-menu" id="download-format-dropdown-mobile">
+                                            <button class="glass-dropdown-item" data-format="pdf">
+                                                <i-ui name="file-02" size="14"></i-ui> PDF
+                                            </button>
+                                            <button class="glass-dropdown-item" data-format="png">
+                                                <i-ui name="image-01" size="14"></i-ui> PNG
+                                            </button>
+                                            <button class="glass-dropdown-item" data-format="jpeg">
+                                                <i-ui name="image-02" size="14"></i-ui> JPG
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- DESKTOP: liquid pill two-section -->
+                            <div class="action-bar-total">
+                                <span class="action-bar-total-label">Total</span>
+                                <span id="grand-total" class="action-bar-total-value">Rp 0</span>
+                            </div>
+                            <div class="action-bar-buttons">
+                                <button id="btn-save-only" class="strip-btn action-strip-btn" title="Simpan">
+                                    <i-ui name="save-01" size="16"></i-ui>
+                                    <span>Simpan</span>
+                                </button>
+                                <div class="action-download-group">
+                                    <button id="btn-download"
+                                        class="strip-btn action-strip-btn action-strip-btn--primary" title="Unduh">
+                                        <i-ui name="download-01" size="16"></i-ui>
+                                        <span>Unduh</span>
+                                    </button>
+                                    <button id="btn-download-split-arrow"
+                                        class="strip-btn action-strip-btn action-strip-btn--arrow"
+                                        title="Format Ekspor Lainnya">
+                                        <i-ui name="chevron-up" size="13"></i-ui>
+                                    </button>
+                                    <div class="glass-dropdown-menu" id="download-format-dropdown">
+                                        <button class="glass-dropdown-item" data-format="pdf">
+                                            <i-ui name="file-02" size="14"></i-ui> PDF
+                                        </button>
+                                        <button class="glass-dropdown-item" data-format="png">
+                                            <i-ui name="image-01" size="14"></i-ui> PNG
+                                        </button>
+                                        <button class="glass-dropdown-item" data-format="jpeg">
+                                            <i-ui name="image-02" size="14"></i-ui> JPG
+                                        </button>
+                                    </div>
+                                </div>
+                                <button id="btn-quick-add-action"
+                                    class="strip-btn action-strip-btn action-strip-btn--add" title="Tambah Item">
+                                    <i-ui name="plus" size="16"></i-ui>
+                                    <span>Tambah</span>
+                                </button>
+                                <button id="btn-global-template-picker" class="strip-btn action-strip-btn"
+                                    title="Pilih dari Template Barang">
+                                    <i-ui name="align-justify" size="16"></i-ui>
+                                </button>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- MODE 2: AI -->
+                    <section id="ai-view" class="view hidden" style="position: relative;">
+                        <div class="ai-prompt-container">
+                            <div id="ai-file-context-container" class="ai-file-context-container"></div>
+                            <textarea id="ai-prompt" class="form-textarea ai-prompt-textarea"
+                                placeholder="Contoh: Kabel NYM 50 meter harga 15rb, MCB 10 pcs harga 50rb..."></textarea>
+
+                            <div class="ai-prompt-actions-bar">
+                                <!-- Div 1: Kiri (Resize & Model Dropdown) -->
+                                <div class="ai-prompt-actions-left">
+                                    <button id="btn-ai-prompt-resize" class="icon-btn" title="Besarkan / Kecilkan">
+                                        <i-ui name="maximize-02" size="16"></i-ui>
+                                    </button>
+                                    <div class="custom-select ai-model-select" id="ai-model-select"
+                                        data-value="gemini-3.5-flash">
+                                        <div class="select-selected form-input">
+                                            <span class="selected-text">Gemini 3.5 Flash</span>
+                                            <i-ui name="chevron-down" size="14"
+                                                style="opacity:0.5;flex-shrink:0;margin-left:4px"></i-ui>
+                                        </div>
+                                        <div class="select-items select-hide">
+                                            <div data-value="gemini-3.5-flash" class="same-as-selected">Gemini 3.5 Flash
+                                            </div>
+                                            <div data-value="gemini-3.1-flash-lite-preview">Gemini 3.1 Lite</div>
+                                            <div data-value="gemini-2.5-flash">Gemini 2.5 Flash</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Div 2: Kanan (Kamera, Galeri, Mic, Generate) -->
+                                <div class="ai-prompt-actions-right">
+                                    <button id="btn-ai-camera" class="icon-btn" title="Buka Kamera">
+                                        <i-ui name="camera-02" size="16"></i-ui>
+                                    </button>
+                                    <button id="btn-ai-gallery" class="icon-btn" title="Pilih dari Galeri">
+                                        <i-ui name="image-01" size="16"></i-ui>
+                                    </button>
+                                    <button id="btn-ai-mic" class="icon-btn" title="Mikrofon">
+                                        <i-ui name="microphone-02" size="16"></i-ui>
+                                    </button>
+                                    <button id="btn-ai-generate" class="btn btn-primary btn-sm">
+                                        <i-ui name="chevron-right" size="15" style="margin-right: 4px;"></i-ui></button>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Input kamera: langsung buka kamera perangkat (capture) -->
+                        <input type="file" id="ai-camera-input" accept="image/*" capture="environment"
+                            style="display:none">
+                        <!-- Input galeri: pilih gambar dari galeri/penyimpanan -->
+                        <input type="file" id="ai-gallery-input" accept="image/*" style="display:none">
+
+                        <!-- Wadah Card Output Hasil Generate -->
+                        <div id="ai-output-container" class="ai-output-container">
+                            <!-- Cards will be dynamically injected here -->
+                        </div>
+
+                        <!-- AI ACTION BAR FLOATING (Mobile + Desktop) -->
+                        <div id="ai-action-bar" class="action-bar-sticky" style="display:none;">
+                            <!-- Normal Mode Elements -->
+                            <div id="ai-action-normal" class="ai-action-mode-wrapper"
+                                style="display: flex; width: 100%; justify-content: space-between; align-items: center;">
+                                <div class="total-display"
+                                    style="display: flex; flex-direction: column; align-items: flex-start;">
+                                    <small
+                                        style="color: var(--text-muted); font-size: 0.75rem; margin-bottom: 2px;">Jumlah
+                                        Data</small>
+                                    <span id="ai-generated-count" class="action-bar-total-value"
+                                        style="font-size: 1.1rem; color: var(--primary); font-weight: 700;">0
+                                        Judul</span>
+                                </div>
+                                <div class="action-bar-buttons" style="display: flex; gap: 8px; align-items: center;">
+                                    <button id="btn-ai-delete-all" class="strip-btn action-strip-btn"
+                                        title="Hapus Semua">
+                                        <i-ui name="trash-04" size="16" style="color: #ff4d4f;"></i-ui>
+                                        <span>Hapus Semua</span>
+                                    </button>
+                                    <button id="btn-ai-save-all"
+                                        class="strip-btn action-strip-btn action-strip-btn--primary"
+                                        title="Simpan Semua">
+                                        <i-ui name="save-01" size="16"></i-ui>
+                                        <span>Simpan Semua</span>
+                                    </button>
+                                    <button id="btn-ai-select-mode" class="strip-btn action-strip-btn"
+                                        title="Pilih Beberapa" style="border: 1px solid var(--border-color);">
+                                        <i-ui name="check-done-01" size="16"></i-ui>
+                                        <span>Pilih</span>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Select Mode Elements -->
+                            <div id="ai-action-select" class="ai-action-mode-wrapper hidden"
+                                style="display: none; width: 100%; justify-content: space-between; align-items: center;">
+                                <!-- Div 1: Kiri (Delete) -->
+                                <div style="display: flex; align-items: center;">
+                                    <button id="btn-ai-delete-selected" class="strip-btn action-strip-btn"
+                                        title="Hapus Terpilih">
+                                        <i-ui name="trash-04" size="16" style="color: #ff4d4f;"></i-ui>
+                                        <span style="color: #ff4d4f;">Hapus</span>
+                                    </button>
+                                </div>
+                                <!-- Div 2: Kanan (Unduh, Simpan, Pilih + Badge) -->
+                                <div class="action-bar-buttons" style="display: flex; gap: 8px; align-items: center;">
+                                    <button id="btn-ai-download-selected" class="strip-btn action-strip-btn"
+                                        title="Unduh Terpilih">
+                                        <i-ui name="download-02" size="16"></i-ui>
+                                        <span>Unduh</span>
+                                    </button>
+                                    <button id="btn-ai-save-selected"
+                                        class="strip-btn action-strip-btn action-strip-btn--primary"
+                                        title="Simpan Terpilih">
+                                        <i-ui name="save-01" size="16"></i-ui>
+                                        <span>Simpan</span>
+                                    </button>
+                                    <button id="btn-ai-exit-select" class="strip-btn action-strip-btn" title="Kembali"
+                                        style="border: 1px solid var(--primary); background: rgba(245, 166, 35, 0.15); position: relative;">
+                                        <i-ui name="check-done-01" size="16" style="color: var(--primary);"></i-ui>
+                                        <span style="color: var(--primary);">Pilih</span>
+                                        <span id="ai-select-badge" class="indicator-badge"
+                                            style="position: absolute; top: -8px; right: -8px; background: var(--primary); color: white; width: 18px; height: 18px; border-radius: 50%; font-size: 0.65rem; display: flex; align-items: center; justify-content: center; font-weight: bold; border: 1px solid var(--bg-card);">0</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- MODE 3: HISTORY -->
+                    <section id="history-view" class="view hidden">
+                        <!-- Conflict Resolution Banner -->
+                        <div id="conflict-resolution-banner" class="conflict-banner hidden"
+                            style="margin-bottom: 16px; padding: 16px; background: rgba(255, 77, 79, 0.08); border: 1px solid rgba(255, 77, 79, 0.2); border-radius: 12px; display: none; flex-direction: column; gap: 12px;">
+                            <div style="display: flex; align-items: flex-start; gap: 10px;">
+                                <i-ui name="alert-triangle" size="20"
+                                    style="color: #ff4d4f; flex-shrink: 0; margin-top: 2px;"></i-ui>
+                                <div
+                                    style="font-size: 0.85rem; line-height: 1.4; color: var(--text-main); text-align: left;">
+                                    <strong>Konflik Data Terdeteksi</strong><br>
+                                    Terdapat perbedaan antara data di Cloud (Server) dan Lokal (Browser ini). Silakan
+                                    pilih resolusi di bawah:
+                                </div>
+                            </div>
+                            <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                                <button id="btn-conflict-keep" class="btn btn-sm btn-outline"
+                                    style="border-color: #ff4d4f; color: #ff4d4f; padding: 6px 12px; border-radius: 6px; font-weight: 500; cursor: pointer;">Pertahankan
+                                    Lokal</button>
+                                <button id="btn-conflict-pull" class="btn btn-sm btn-primary"
+                                    style="background: #ff4d4f; border-color: #ff4d4f; color: white; padding: 6px 12px; border-radius: 6px; font-weight: 500; cursor: pointer;">Sync
+                                    dari Cloud</button>
+                                <button id="btn-conflict-merge" class="btn btn-sm btn-outline"
+                                    style="border-color: var(--primary); color: var(--primary); padding: 6px 12px; border-radius: 6px; font-weight: 500; cursor: pointer;">Timpa
+                                    (Merge)</button>
+                            </div>
+                        </div>
+                        <div id="history-sticky-wrapper">
+                            <div class="history-toolbar">
+                                <div class="history-search-wrapper">
+                                    <i-ui name="search-lg" size="14"
+                                        style="position:absolute; left: 20px; top:50%; transform:translateY(-50%)"></i-ui>
+                                    <input type="text" id="history-search" class="form-input search-history"
+                                        placeholder="Cari riwayat..." style="padding-left:36px; font-size:0.9rem;">
+                                </div>
+                                <button id="btn-multi-select" class="icon-btn" title="Pilih Semua / Beberapa">
+                                    <i-ui name="check-done-01" size="17"></i-ui>
+                                </button>
+                                <button id="btn-history-filter" class="icon-btn" title="Filter Riwayat">
+                                    <i-ui name="filter-funnel-01" size="16"></i-ui>
+                                </button>
+                                <div id="sync-status-indicator" class="sync-status-pill realtime"
+                                    title="Status Sinkronisasi">
+                                    <div class="sync-status-dot"></div>
+                                    <span class="sync-status-text">Realtime</span>
+                                </div>
+                            </div>
+                            <!-- Filter chips injected here by JS -->
+                        </div>
+                        <div id="history-list" class="history-list">
+                            <!-- History items will be injected here -->
+                        </div>
+
+                        <!-- Batch Action Bar (fixed footer for multiselect) -->
+                        <div id="batch-delete-bar" class="batch-delete-bar hidden">
+                            <span id="batch-count">0 dipilih</span>
+                            <div style="display:flex; gap:8px; align-items:center;">
+                                <button id="btn-batch-download" class="btn btn-sm"
+                                    style="background:#27ae60; color:white; border:none;" title="Unduh semua terpilih">
+                                    <i-ui name="download-01" size="14"></i-ui> Unduh
+                                </button>
+                                <button id="btn-batch-delete" class="btn btn-sm"
+                                    style="background:#ff4d4f; color:white; border:none;">
+                                    <i-ui name="trash-02" size="14"></i-ui> Hapus
+                                </button>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- MODE 4: KEUANGAN -->
+                    <section id="finance-view" class="view hidden">
+                        <!-- Target & Mode Controls — single row -->
+                        <div class="finance-controls">
+                            <div class="finance-target-unit">
+                                <label class="field-label">Target Bulanan</label>
+                                <div class="finance-target-input-wrap">
+                                    <span class="finance-target-prefix">Rp</span>
+                                    <input type="text" id="finance-target-input" class="finance-target-input"
+                                        placeholder="3.800.000" inputmode="numeric">
+                                </div>
+                            </div>
+                            <div class="segmented-group" id="finance-mode-switcher">
+                                <button class="segmented-btn active" data-mode="bulan">Bulan</button>
+                                <button class="segmented-btn" data-mode="tahun">Tahun</button>
+                                <button class="segmented-btn" data-mode="semua">Semua</button>
+                            </div>
+                        </div>
+
+                        <!-- Pemasukan Summary Card -->
+                        <div class="finance-summary-card">
+                            <p class="finance-summary-label" id="finance-summary-label">Pemasukan bulan ini</p>
+                            <div class="finance-summary-amount">
+                                <span class="finance-rp">Rp.</span>
+                                <span id="finance-amount-value">0</span>
+                            </div>
+                            <p class="finance-summary-sub" id="finance-summary-sub"></p>
+                        </div>
+
+                        <!-- Bar Chart: Bulanan -->
+                        <div class="finance-chart-card" id="finance-monthly-card">
+                            <div class="finance-chart-header">
+                                <span class="finance-chart-title" id="finance-chart-year">2026</span>
+                                <div style="display:flex; gap:4px;">
+                                    <button class="finance-nav-btn" id="finance-year-prev">
+                                        <i-ui name="chevron-left" size="16"></i-ui>
+                                    </button>
+                                    <button class="finance-nav-btn" id="finance-year-next">
+                                        <i-ui name="chevron-right" size="16"></i-ui>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="finance-chart" id="finance-monthly-chart"></div>
+                        </div>
+
+                        <!-- Bar Chart: Tahunan -->
+                        <div class="finance-chart-card" id="finance-yearly-card">
+                            <div class="finance-chart-header">
+                                <span class="finance-chart-title">Tahunan</span>
+                            </div>
+                            <div class="finance-chart" id="finance-yearly-chart"></div>
+                        </div>
+
+                        <!-- Mini History -->
+                        <div class="finance-history-section">
+                            <div class="finance-history-header">
+                                <span class="finance-chart-title">History</span>
+                                <select id="finance-history-sort" class="finance-sort-select">
+                                    <option value="terbaru">Terbaru</option>
+                                    <option value="terlama">Terlama</option>
+                                </select>
+                            </div>
+                            <div id="finance-history-list"></div>
+                        </div>
+                    </section>
+
+                    <!-- PREVIEW & DOWNLOAD BAR -->
+                    <!-- Visible in Manual and AI modes -->
+                    <section id="preview-section" class="preview-section">
+                        <div class="preview-header" style="padding-bottom: 8px;">
+                            <h3>Preview</h3>
+                        </div>
+                        <div class="preview-cards">
+                            <div class="preview-card invoice-preview">
+                                <div id="invoice-preview-container" class="preview-content">
+                                    <!-- Real-time HTML render -->
+                                </div>
+                                <button class="btn preview-card-download-btn" data-download-type="invoice"
+                                    style="position:absolute; right:10px; bottom:10px; padding:8px 10px; font-size:0.8rem; background:#e67e22; border-color:#d35400; color:white;">
+                                    <i-ui name="download-01" size="15"></i-ui>
+                                </button>
+                            </div>
+                            <div class="preview-card letter-preview">
+                                <div id="letter-preview-container" class="preview-content">
+                                    <!-- Real-time HTML render -->
+                                </div>
+                                <button class="btn preview-card-download-btn" data-download-type="surat"
+                                    style="position:absolute; right:10px; bottom:10px; padding:8px 10px; font-size:0.8rem; background:#e67e22; border-color:#d35400; color:white;">
+                                    <i-ui name="download-01" size="15"></i-ui>
+                                </button>
+                            </div>
+                        </div>
+
+                    </section>
+
+
+                </main>
+
+                <!-- Collapsible Preview Panel (Right column on desktop) -->
+                <aside class="desktop-preview-panel" id="desktop-preview-panel">
+                    <div class="preview-panel-header">
+                        <h3>Pratinjau</h3>
+                        <button class="icon-btn" id="btn-preview-collapse" title="Sembunyikan Preview">
+                            <i-ui name="chevron-right" size="18"></i-ui>
+                        </button>
+                    </div>
+                    <div class="preview-panel-body" id="desktop-preview-body">
+                        <!-- Dynamically injected preview cards -->
+                    </div>
+                </aside>
+
+                <!-- Collapsed vertical strip for preview -->
+                <div class="collapsed-preview-strip" id="collapsed-preview-strip" title="Tampilkan Pratinjau">
+                    <button class="strip-btn" id="btn-preview-expand">
+                        <i-ui name="chevron-left" size="16"></i-ui>
+                    </button>
+                    <div class="strip-text">Pratinjau</div>
+                </div>
+
+            </div> <!-- Close .workspace-body-wrapper -->
+        </div> <!-- Close .workspace-container -->
+    </div> <!-- Close .app-container -->
+
+    <!-- Footer (Mobile Only) -->
+    <footer class="app-footer">
+        Powered By <strong><a href="https://zanxa.studio" target="_blank" style="color: #fff;">Zanxa Studio</a></strong>
+    </footer>
+
+    <!-- Settings Modal -->
+    <div id="settings-modal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Pengaturan</h2>
+                <div style="display:flex; gap:10px; margin-left:auto; margin-right:8px;">
+                    <div style="margin-left:auto; margin-right:8px;">
+                        <button id="btn-theme-cycle" class="icon-btn" title="Ganti Tema"
+                            style="background: transparent; border: 1px solid var(--border-color); border-radius: 50%; width: 34px; height: 34px; display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--text-main); transition: all 0.2s;">
+                            <i-ui name="monitor-01" size="16"></i-ui>
+                        </button>
+                    </div>
+                </div>
+                <button class="close-modal">
+                    <i-ui name="x" size="18"></i-ui>
+                </button>
+            </div>
+            <div class="modal-body" style="padding: 0;">
+                <!-- Settings Login Container (Only visible when logged out) -->
+                <div id="settings-login-container" class="hidden" style="display:none; padding: 16px;">
+                    <!-- Unauthenticated / Guest State -->
+                    <div id="account-unauthenticated">
+                        <div class="guest-banner"
+                            style="background:rgba(243,156,18,0.08); border:1px solid rgba(243,156,18,0.2); border-radius:12px; padding:12px; margin-bottom:16px; display:flex; align-items:flex-start; gap:10px;">
+                            <i-ui name="alert-triangle" size="20"
+                                style="color:#f39c12; flex-shrink:0; margin-top:2px;"></i-ui>
+                            <div style="font-size:0.8rem; line-height:1.4; color:var(--text-main); text-align:left;">
+                                <strong>Guest Mode Aktif</strong><br>
+                                Seluruh data disimpan secara lokal di peramban ini. Masuk sebagai Administrator untuk
+                                mengaktifkan sinkronisasi aman ke Cloud.
+                            </div>
+                        </div>
+
+                        <h3
+                            style="margin-bottom:12px; text-align:left; font-size:1rem; font-weight:600; color:var(--text-main);">
+                            Login Administrator</h3>
+
+                        <!-- Google OAuth Button -->
+                        <button id="btn-login-google" class="btn btn-full btn-google"
+                            style="background:#fff; color:#333; border:1px solid #ddd; display:flex; align-items:center; justify-content:center; gap:10px; font-weight:600; margin-bottom:16px; padding:10px 12px; border-radius:8px; width:100%; cursor:pointer;">
+                            <svg width="18" height="18" viewBox="0 0 18 18" style="flex-shrink:0;">
+                                <path
+                                    d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.717v2.258h2.908c1.702-1.567 2.684-3.874 2.684-6.615z"
+                                    fill="#4285F4" />
+                                <path
+                                    d="M9 18c2.43 0 4.467-.806 5.956-2.184l-2.908-2.258c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332C2.438 15.938 5.48 18 9 18z"
+                                    fill="#34A853" />
+                                <path
+                                    d="M3.964 10.707c-.18-.54-.282-1.117-.282-1.707 0-.59.102-1.167.282-1.707V4.961H.957C.347 6.173 0 7.549 0 9s.347 2.827.957 4.039l3.007-2.332z"
+                                    fill="#FBBC05" />
+                                <path
+                                    d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.896 11.426 0 9 0 5.48 0 2.438 2.062.957 5.061l3.007 2.332C4.672 5.164 6.656 3.58 9 3.58z"
+                                    fill="#EA4335" />
+                            </svg>
+                            Masuk dengan Google
+                        </button>
+
+                        <div style="display:flex; align-items:center; margin-bottom:16px;">
+                            <div style="flex:1; height:1px; background:var(--border-color);"></div>
+                            <span style="font-size:0.75rem; color:var(--text-muted); padding:0 8px;">atau</span>
+                            <div style="flex:1; height:1px; background:var(--border-color);"></div>
+                        </div>
+
+                        <!-- Email / Password Form -->
+                        <form id="form-login-email"
+                            style="display:flex; flex-direction:column; gap:12px; text-align:left;">
+                            <div class="input-group" style="text-align:left; margin-bottom:0;">
+                                <label class="field-label" style="margin-bottom:6px;">Email Administrator</label>
+                                <input type="email" id="login-email" class="form-input" placeholder="admin@flowa.id"
+                                    required style="width:100%;">
+                            </div>
+                            <div class="input-group" style="text-align:left; margin-bottom:4px;">
+                                <label class="field-label" style="margin-bottom:6px;">Kata Sandi</label>
+                                <input type="password" id="login-password" class="form-input" placeholder="••••••••"
+                                    required style="width:100%;">
+                            </div>
+                            <button type="submit" class="btn btn-primary btn-full"
+                                style="padding:10px 12px; margin-top:4px;">Masuk Sistem</button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Settings Authenticated Content (Only visible when logged in) -->
+                <div id="settings-authenticated-content">
+                    <!-- Settings Tabs -->
+                    <div class="toggle-group" style="margin-bottom: 16px;">
+                        <button class="toggle-btn active" id="tab-general">Umum</button>
+                        <button class="toggle-btn" id="tab-templates">Templates</button>
+                    </div>
+
+                    <div id="settings-general">
+                        <!-- Account Section (Integrated at the top of General tab) -->
+                        <div class="setting-section"
+                            style="padding: 4px 8px 16px 8px; border-bottom: 1px solid var(--border-color); margin-bottom: 16px;">
+                            <!-- Loading State -->
+                            <div id="account-loading" style="padding:30px; text-align:center;">
+                                <div class="account-spinner"
+                                    style="border:2px solid rgba(255,255,255,0.1); border-top:2px solid var(--primary); border-radius:50%; width:24px; height:24px; animation:spin 1s linear infinite; margin:0 auto 10px auto;">
+                                </div>
+                                <p style="font-size:0.85rem; color:var(--text-muted);">Memeriksa status otentikasi...
+                                </p>
+                            </div>
+
+                            <!-- Authenticated / Admin State -->
+                            <div id="account-authenticated" class="hidden" style="display:none;">
+                                <div class="admin-profile-card"
+                                    style="background:rgba(255,255,255,0.02); border:1px solid var(--border-color); border-radius:16px; padding:16px; text-align:center; position:relative; overflow:hidden; margin-bottom:16px;">
+                                    <div class="admin-glow"
+                                        style="position:absolute; top:-50px; left:50%; transform:translateX(-50%); width:100px; height:100px; background:var(--primary); filter:blur(40px); opacity:0.15; pointer-events:none;">
+                                    </div>
+
+                                    <div style="position:relative; display:inline-block; margin-bottom:10px;">
+                                        <img id="admin-avatar" src="" alt="Avatar"
+                                            style="width:64px; height:64px; border-radius:50%; object-fit:cover; border:2px solid var(--primary); background:var(--bg-body); display:none; margin: 0 auto;">
+                                        <div id="admin-avatar-placeholder"
+                                            style="width:64px; height:64px; border-radius:50%; background:linear-gradient(135deg, var(--primary), #d4880d); display:flex; align-items:center; justify-content:center; color:#fff; font-size:1.5rem; font-weight:700; border:2px solid var(--primary); margin: 0 auto;">
+                                            A</div>
+                                    </div>
+
+                                    <h3 id="admin-name"
+                                        style="font-size:1.05rem; margin-top:4px; margin-bottom:2px; font-weight:600; color:var(--text-main);">
+                                        Administrator</h3>
+                                    <p id="admin-email"
+                                        style="font-size:0.8rem; color:var(--text-muted); margin-bottom:10px;"></p>
+
+                                    <span class="admin-badge"
+                                        style="display:inline-block; padding:4px 10px; font-size:0.65rem; font-weight:700; text-transform:uppercase; letter-spacing:0.05em; background:linear-gradient(90deg, #d4880d, #f39c12); color:#fff; border-radius:50px; box-shadow:0 2px 8px rgba(243,156,18,0.3);">Administrator</span>
+                                </div>
+
+                                <div class="settings-list" style="margin-bottom:20px;">
+                                    <div class="setting-row" style="padding:12px 4px;">
+                                        <div class="setting-info" style="text-align:left;">
+                                            <span class="setting-label" style="font-size:0.95rem;">Sinkronisasi
+                                                Cloud</span>
+                                            <span class="setting-subtext" id="sync-status-text"
+                                                style="font-size:0.8rem;">Menghubungkan ke server cloud...</span>
+                                        </div>
+                                        <div class="setting-control">
+                                            <button id="btn-manual-sync" class="btn btn-sm btn-outline"
+                                                style="padding:6px 12px; font-size:0.8rem; display:flex; align-items:center; gap:6px; cursor:pointer;">
+                                                <i-ui name="refresh-ccw-01" size="12"></i-ui> Sync
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <button id="btn-logout" class="btn btn-outline btn-full"
+                                    style="color:#ff4d4f; border-color:#ff4d4f; display:flex; align-items:center; justify-content:center; gap:8px; padding:12px; width:100%; cursor:pointer;">
+                                    <i-ui name="log-out-01" size="14"></i-ui> Keluar Akun
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Download Format (Segmented Control) -->
+                        <div class="setting-row" style="flex-direction: column; align-items: flex-start; gap: 12px;">
+                            <div class="setting-info">
+                                <span class="setting-label">Format Unduhan</span>
+                                <span class="setting-subtext">Pilih format file utama saat mengunduh.</span>
+                            </div>
+                            <div class="setting-control" style="width: 100%;">
+                                <div class="segmented-control" id="download-format-selector">
+                                    <button class="segmented-btn active" data-value="pdf">PDF</button>
+                                    <button class="segmented-btn" data-value="png">PNG</button>
+                                    <button class="segmented-btn" data-value="jpeg">JPG</button>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- PDF page mode (Segmented Control) -->
+                        <div class="setting-row" style="flex-direction: column; align-items: flex-start; gap: 12px;">
+                            <div class="setting-info">
+                                <span class="setting-label">Mode Halaman PDF</span>
+                                <span class="setting-subtext">Cetak Invoice &amp; Surat Jalan terpisah atau dalam satu
+                                    dokumen.</span>
+                            </div>
+                            <div class="setting-control" style="width: 100%;">
+                                <div class="segmented-control" id="pdf-page-mode-selector">
+                                    <button class="segmented-btn active" data-value="single">Satu per Satu</button>
+                                    <button class="segmented-btn" data-value="combined">Bersamaan</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Group 2: Validation & Filenames -->
+                        <div class="settings-list">
+                            <div class="setting-row">
+                                <div class="setting-info">
+                                    <span class="setting-label">Judul Wajib Diisi</span>
+                                    <span class="setting-subtext">Cegah unduhan tanpa judul invoice.</span>
+                                </div>
+                                <div class="setting-control">
+                                    <label class="ios-switch">
+                                        <input type="checkbox" id="setting-title-required" checked>
+                                        <span class="ios-slider"></span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="setting-row">
+                                <div class="setting-info">
+                                    <span class="setting-label">Unduh & Simpan</span>
+                                    <span class="setting-subtext">Tombol unduh juga akan menyimpan data ke
+                                        histori.</span>
+                                </div>
+                                <div class="setting-control">
+                                    <label class="ios-switch">
+                                        <input type="checkbox" id="setting-download-save">
+                                        <span class="ios-slider"></span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="setting-row">
+                                <div class="setting-info">
+                                    <span class="setting-label">Sync Data</span>
+                                    <span class="setting-subtext">Impor / Ekspor riwayat aplikasi.</span>
+                                </div>
+                                <div class="setting-control" style="flex: 1; max-width: 140px;">
+                                    <div class="segmented-control" style="width: 100%;">
+                                        <button id="btn-import-data" class="segmented-btn"
+                                            style="flex:1;">Import</button>
+                                        <button id="btn-export-data" class="segmented-btn"
+                                            style="flex:1;">Export</button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="setting-row"
+                                style="flex-direction: column; align-items: flex-start; gap: 8px; border-bottom: none;">
+                                <div class="setting-info">
+                                    <span class="setting-label">Format Nama File</span>
+                                    <span class="setting-subtext">Gunakan <code>{judul}</code> sebagai
+                                        placeholder.</span>
+                                </div>
+                                <div
+                                    style="width: 100%; display: flex; flex-direction: column; gap: 8px; margin-top: 4px;">
+                                    <div style="position: relative;">
+                                        <small
+                                            style="position: absolute; right: 16px; top: 16px; color: var(--muted); font-size: 0.65rem; font-weight: 500; ">Invoice</small>
+                                        <input type="text" id="format-invoice" class="form-input"
+                                            value="Invoice-{judul}" placeholder="Invoice-{judul}"
+                                            style="font-size: 0.85rem;">
+                                    </div>
+                                    <div style="position: relative;">
+                                        <small
+                                            style="position: absolute; right: 16px; top: 16px; color: var(--muted); font-size: 0.65rem; font-weight: 500;">Surat
+                                            Jalan</small>
+                                        <input type="text" id="format-surat-jalan" class="form-input"
+                                            value="Surat Jalan-{judul}" placeholder="Surat Jalan-{judul}"
+                                            style="font-size: 0.85rem;">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="setting-row"
+                                style="flex-direction: column; align-items: flex-start; gap: 8px; border-bottom: none;">
+                                <div class="setting-info">
+                                    <span class="setting-label">Prompt Default AI</span>
+                                    <span class="setting-subtext">Instruksi dasar yang dikirimkan ke sistem kecerdasan
+                                        buatan.</span>
+                                </div>
+                                <div
+                                    style="width: 100%; display: flex; flex-direction: column; gap: 8px; margin-top: 4px;">
+                                    <textarea id="setting-ai-default-prompt" class="form-input"
+                                        style="font-size: 0.85rem; min-height: 80px; resize: vertical;"
+                                        placeholder="Masukkan instruksi default AI..."></textarea>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Danger Zone -->
+                        <div style="padding: 8px; display: flex; flex-direction: column; gap: 8px;">
+                            <button id="btn-reset-settings" class="btn btn-outline btn-full"
+                                style="color:#f39c12; border-color:#f39c12; width: 100%;">
+                                <i-ui name="refresh-ccw-01" size="14"></i-ui> Reset Semua Pengaturan
+                            </button>
+                            <button id="btn-delete-all-data" class="btn btn-outline btn-full"
+                                style="color:#ff4d4f; border-color:#ff4d4f; width: 100%;">
+                                <i-ui name="trash-01" size="14"></i-ui> Hapus Semua Data
+                            </button>
+                        </div>
+                    </div>
+
+                    <div id="settings-templates" class="hidden" style="display:none;">
+                        <div class="setting-section">
+                            <h3>Kelola Template</h3>
+                            <p><small>Buat template untuk item yang sering digunakan.</small></p>
+                            <div id="template-list" style="max-height: 300px; overflow-y: auto; margin: 10px 0;">
+                                <!-- Templates Rendered Here -->
+                            </div>
+                            <button id="btn-add-template" class="btn btn-sm btn-outline btn-full">+ Tambah Template
+                                Baru</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- PDF Preview Modal -->
+    <div id="preview-modal" class="modal hidden">
+        <div class="modal-content" style="height: 90vh;">
+            <div class="modal-header">
+                <h2 id="preview-title">Preview</h2>
+                <div style="display:flex; gap:10px; margin-left:auto; margin-right:8px;">
+                    <button id="btn-modal-edit" class="btn btn-outline-edit"
+                        style="padding:6px 12px; font-size:0.85rem;" title="Edit Manual">
+                        <i-ui name="pencil-01" size="14"></i-ui> Edit
+                    </button>
+                    <button id="preview-download-btn" class="btn btn-primary"
+                        style="padding:6px 12px; font-size:0.85rem;" title="Unduh">
+                        <i-ui name="download-01" size="14"></i-ui> Unduh
+                    </button>
+                </div>
+                <button class="close-modal-preview">
+                    <i-ui name="x" size="18"></i-ui>
+                </button>
+            </div>
+            <div class="modal-body" style="height: calc(100% - 60px);">
+                <iframe id="pdf-preview-frame"
+                    style="width:100%; height:100%; border:none; pointer-events:none;"></iframe>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Confirm Modal -->
+    <div id="edit-confirm-modal" class="modal hidden">
+        <div class="modal-content" style="max-width: 400px; text-align: center; padding: 20px;">
+            <i-ui name="alert-triangle" size="48" style="color:#f39c12; margin-bottom:15px"></i-ui>
+            <h3 style="margin-bottom:10px;">Konfirmasi Edit Manual</h3>
+            <p style="margin-bottom:15px; font-size: 0.95rem; color: var(--text-muted); line-height: 1.4;">
+                Mengubah dokumen secara manual akan <strong>menonaktifkan</strong> otomatisasi input data di halaman
+                utama agar tidak tumpang tindih.<br><br>Apakah Anda yakin ingin melanjutkan?
+            </p>
+            <div style="text-align: left; margin-bottom: 20px;">
+                <label
+                    style="display: flex; align-items: center; gap: 8px; cursor: pointer; justify-content: center; font-size: 0.9rem;">
+                    <input type="checkbox" id="dont-show-edit-confirm" style="width: 16px; height: 16px;">
+                    Jangan tampilkan pesan ini lagi
+                </label>
+            </div>
+            <div style="display: flex; gap: 10px; justify-content: center;">
+                <button id="btn-cancel-edit" class="btn btn-outline" style="flex: 1;">Batal</button>
+                <button id="btn-proceed-edit" class="btn btn-primary"
+                    style="flex: 1; background: #e67e22; border-color: #d35400;">Lanjutkan</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Custom Confirm: Transfer history to Manual Mode -->
+    <div id="history-to-manual-confirm" class="modal hidden"
+        style="z-index: 500; display: flex; align-items: center; justify-content: center;">
+        <div class="modal-content"
+            style="width: calc(100% - 32px); max-width: 360px; text-align: center; padding: 24px; margin: auto; border-radius: var(--radius-md)">
+            <i-ui name="refresh-ccw-01" size="35" style="color:#F5A623; margin-bottom:12px"></i-ui>
+            <h3 style="margin-bottom: 8px; font-size: 1.1rem;">Pindah ke Mode Manual?</h3>
+            <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 20px; line-height: 1.5;">
+                Data riwayat ini akan <strong>menggantikan</strong> data yang ada di Mode Manual saat ini.
+            </p>
+            <div style="display: flex; gap: 10px;">
+                <button id="btn-history-confirm-cancel" class="btn btn-outline" style="flex:1;">Batal</button>
+                <button id="btn-history-confirm-proceed" class="btn btn-primary"
+                    style="flex:1; background:#F5A623; border-color:#d4880d;">Pindahkan</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bottom Sheet for History Details -->
+    <div id="detail-sheet" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header modal-header-history" style="display: block;">
+                <div style="float: right; display:flex; gap:8px; margin-left: 10px; margin-bottom: 4px;">
+                    <button id="btn-detail-download" class="btn btn-action-green"
+                        style="padding:10px 10px; font-size:0.85rem; border-radius:10px;" title="Unduh">
+                        <i-ui name="download-01" size="16"></i-ui>
+                    </button>
+                    <button id="btn-detail-edit-toggle" class="btn btn-action-orange"
+                        style="padding:10px 10px; font-size:0.85rem; border-radius:10px;" title="Edit">
+                        <i-ui name="pencil-01" size="16"></i-ui>
+                    </button>
+                    <button id="btn-detail-delete" class="btn btn-action-red"
+                        style="padding:10px 10px; font-size:0.85rem; border-radius:10px;" title="Hapus">
+                        <i-ui name="trash-01" size="16"></i-ui>
+                    </button>
+                </div>
+                <h2 id="detail-title" style="line-height:1.2; word-break: break-word; font-size: 1.15rem; margin: 0;">
+                    Detail Invoice</h2>
+                <div style="clear: both;"></div>
+            </div>
+            <div id="detail-content" class="modal-body">
+                <!-- Content injected via JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Custom Date Picker Modal -->
+    <div id="custom-date-picker" class="modal picker-modal">
+        <div class="modal-content datepicker-content">
+            <div class="datepicker-header">
+                <input type="text" id="dp-input" class="form-input" placeholder="dd/mm/yyyy"
+                    style="text-align: center; font-size: 1.1rem; letter-spacing: 1px; width:100%;" inputmode="numeric">
+            </div>
+            <div class="datepicker-nav">
+                <span id="dp-month-year">May 2026</span>
+                <div class="dp-nav-controls">
+                    <button id="dp-btn-today">Hari ini</button>
+                    <button id="dp-btn-prev">
+                        <i-ui name="chevron-left" size="15"></i-ui>
+                    </button>
+                    <button id="dp-btn-next">
+                        <i-ui name="chevron-right" size="15"></i-ui>
+                    </button>
+                </div>
+            </div>
+            <div class="datepicker-grid">
+                <div class="dp-weekdays">
+                    <span>Min</span><span>Sen</span><span>Sel</span><span>Rab</span><span>Kam</span><span>Jum</span><span>Sab</span>
+                </div>
+                <div id="dp-days" class="dp-days">
+                    <!-- Days injected via JS -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Custom Time Picker Modal -->
+    <div id="custom-time-picker" class="modal picker-modal">
+        <div class="modal-content datepicker-content" style="max-width:auto;">
+            <div class="modal-header" style="border-bottom:none; padding-bottom:5px;">
+                <h2 style="font-size:1.1rem;">Atur Waktu</h2>
+                <button class="close-timepicker">
+                    <i-ui name="x" size="18"></i-ui>
+                </button>
+            </div>
+            <div class="timepicker-body"
+                style="display:flex; align-items:center; justify-content:center; gap:20px; padding:20px 0;">
+                <input type="number" id="tp-hour" class="form-input" min="0" max="23"
+                    style="width:70px; text-align:center; font-size:2rem; padding:10px;" placeholder="00">
+                <span style="font-size:2rem; font-weight:bold;">:</span>
+                <input type="number" id="tp-minute" class="form-input" min="0" max="59"
+                    style="width:70px; text-align:center; font-size:2rem; padding:10px;" placeholder="00">
+            </div>
+            <div style="padding: 16px;">
+                <button id="tp-btn-save" class="btn btn-primary" style="width:100%; padding:12px;">Simpan Waktu</button>
+            </div>
+        </div>
+    </div>
+
+
+
+    <!-- Custom Alert Notification -->
+    <div id="custom-alert" class="custom-alert hidden">
+        <div class="alert-content">
+            <span id="alert-message"></span>
+        </div>
+    </div>
+
+    <!-- Custom Confirm Modal (Duplicate Title) -->
+    <div id="custom-confirm" class="custom-confirm-overlay hidden">
+        <div class="custom-confirm-box">
+            <div class="confirm-icon">
+                <i-ui name="copy-01" size="32"></i-ui>
+            </div>
+            <h3 id="confirm-title">Judul Sudah Ada</h3>
+            <p id="confirm-message">Data dengan judul ini sudah ada di riwayat. Tetap simpan?</p>
+            <div class="confirm-actions">
+                <button id="confirm-cancel" class="btn btn-outline">Batal</button>
+                <button id="confirm-proceed" class="btn btn-primary">Lanjutkan</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Onboarding Modal -->
+    <div id="onboarding-modal" class="modal hidden"
+        style="z-index: 9999; display: flex; align-items: center; justify-content: center;">
+        <div class="modal-content"
+            style="max-width: 400px; text-align: center; padding: 30px; border-radius: var(--radius-md);">
+            <div class="onboarding-icon" style="color: var(--primary); margin-bottom: 20px;">
+                <i-ui name="face-smile" size="56"></i-ui>
+            </div>
+            <h2 style="margin-bottom: 15px;">Halo! Selamat Datang</h2>
+            <p style="margin-bottom: 25px; color: var(--text-muted); line-height: 1.6;">
+                Mari atur preferensi unduhan Anda untuk pertama kali. Anda tetap bisa mengubahnya nanti di menu
+                pengaturan.
+            </p>
+
+            <div class="input-group" style="text-align: left;">
+                <label class="field-label">Metode Unduhan Utama</label>
+                <div class="segmented-control" id="onboarding-format-selector" style="margin-top: 10px;">
+                    <button class="segmented-btn active" data-value="pdf">PDF</button>
+                    <button class="segmented-btn" data-value="png">PNG</button>
+                    <button class="segmented-btn" data-value="jpeg">JPG</button>
+                </div>
+            </div>
+
+            <button id="btn-onboarding-start" class="btn btn-primary btn-full" style="margin-top: 20px; padding: 14px;">
+                Mulai Sekarang <i-ui name="arrow-right" size="16"></i-ui>
+            </button>
+        </div>
+    </div>
+
+    <!-- AI Radial Overlay for Mobile Gestures -->
+    <div id="ai-radial-overlay" class="ai-radial-overlay hidden">
+        <div class="radial-center-anchor">
+            <div class="radial-ring-menu">
+                <!-- Camera Button at 11 o'clock -->
+                <button id="btn-radial-camera" class="radial-action-btn btn-camera" title="Ambil Foto">
+                    <i-ui name="camera-02" size="24"></i-ui>
+                </button>
+                <!-- Gallery Button at 12 o'clock (top center, slightly higher) -->
+                <button id="btn-radial-gallery" class="radial-action-btn btn-gallery" title="Pilih Gambar">
+                    <i-ui name="image-01" size="24"></i-ui>
+                </button>
+                <!-- Mic Button at 1 o'clock -->
+                <button id="btn-radial-mic" class="radial-action-btn btn-mic" title="Rekam Suara">
+                    <i-ui name="microphone-02" size="24"></i-ui>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Multimodal File Preview Modal -->
+    <div id="file-preview-modal" class="modal file-preview-modal hidden"
+        style="z-index: 99999; display: none; align-items: center; justify-content: center; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0, 0, 0, 0.65);">
+        <div class="modal-content"
+            style="max-width: 500px; padding: 20px; border-radius: var(--radius-md); background: var(--bg-card); border: 1px solid var(--border-color); width: calc(100% - 32px); box-shadow: var(--shadow-lg);">
+            <div class="modal-header"
+                style="border-bottom: 1px solid var(--border-color); padding-bottom: 10px; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center;">
+                <h2 id="preview-modal-title" style="font-size: 1.1rem; font-weight: 600; margin: 0;">Pratinjau Berkas
+                </h2>
+                <button class="close-preview-modal icon-btn" id="btn-close-preview-modal"
+                    style="background: transparent; border: none; cursor: pointer; color: var(--text-main);">
+                    <i-ui name="x" size="20"></i-ui>
+                    </buttozn>
+            </div>
+            <div class="preview-modal-body"
+                style="display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 200px; width: 100%;">
+                <div id="preview-image-container" class="hidden"
+                    style="width: 100%; display: none; text-align: center;">
+                    <img id="preview-img-element" src="" alt="Pratinjau Foto"
+                        style="max-width: 100%; max-height: 350px; border-radius: 8px; object-fit: contain; box-shadow: var(--shadow-md);">
+                </div>
+                <div id="preview-audio-container" class="hidden"
+                    style="width: 100%; display: none; flex-direction: column; align-items: center; gap: 12px; padding: 20px;">
+                    <i-ui name="microphone-02" size="48" style="color: var(--primary);"></i-ui>
+                    <span id="preview-audio-filename"
+                        style="font-size: 0.85rem; color: var(--text-muted);">rekaman-suara.wav</span>
+                    <audio id="preview-audio-element" controls style="width: 100%; margin-top: 10px;"></audio>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script type="module" src="js/app.js?v=1.4"></script>
+
+</body>
+
+
+</html>

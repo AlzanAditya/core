@@ -1,0 +1,384 @@
+/**
+ * layout.css — App Shell & Navigation Structure
+ * Header, tab-nav, main content area, footer, sticky wrappers.
+ */
+
+/* ============================================
+   APP HEADER
+   ============================================ */
+.app-header {
+    background-color: var(--bg-card);
+    padding: 10px var(--spacing-md) 8px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    transition: transform 0.3s ease;
+}
+
+.app-header.hide {
+    transform: translateY(-100%);
+}
+
+.brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.logo-container {
+    width: 40px;
+    height: 40px;
+    background: transparent !important;
+    border-radius: 0;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.app-logo {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    background-color: transparent !important;
+}
+
+/* ============================================
+   TAB NAVIGATION
+   ============================================ */
+/* ============================================
+   TAB NAVIGATION (BOTTOM CONVEX BAR ON MOBILE)
+   ============================================ */
+.tab-nav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    background-color: var(--bg-card);
+    padding: 6px 8px 10px 8px;
+    /* Extra bottom padding for mobile safe area */
+    border-top: 1px solid var(--border-color);
+    border-bottom: none;
+    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.08);
+    height: 66px;
+    box-sizing: border-box;
+    overflow: visible;
+}
+
+
+/* Global active tab state — propagates to all shadows */
+:root:has(.tab-btn[data-tab="dashboard"].active) {
+    --active-tab-glow: var(--primary);
+}
+
+:root:has(.tab-btn[data-tab="manual"].active) {
+    --active-tab-glow: var(--primary);
+}
+
+:root:has(.tab-btn[data-tab="ai"].active) {
+    --active-tab-glow: var(--secondary);
+}
+
+:root:has(.tab-btn[data-tab="history"].active) {
+    --active-tab-glow: var(--tertiary);
+}
+
+:root:has(.tab-btn[data-tab="finance"].active) {
+    --active-tab-glow: var(--finance-green);
+}
+
+.tab-btn {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: transparent !important;
+    border: none !important;
+    padding: 2px 0 4px 0 !important;
+    font-size: 0.65rem !important;
+    color: var(--text-muted) !important;
+    cursor: pointer;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: visible !important;
+    font-weight: 400 !important;
+    /* Thin by default for inactive */
+    gap: 4px;
+    height: 100%;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    -webkit-tap-highlight-color: transparent;
+}
+
+/* Active states for mobile bottom nav (tab-nav) - clean black/bold active look */
+.tab-nav .tab-btn.active:not(.tab-btn-ai) {
+    background: transparent !important;
+    border: none !important;
+    color: #000000 !important;
+    /* Active text color is black */
+    font-weight: 700 !important;
+    /* Active text is bold */
+    box-shadow: none !important;
+}
+
+[data-theme="dark"] .tab-nav .tab-btn.active:not(.tab-btn-ai) {
+    color: #ffffff !important;
+    /* Active is white in dark theme */
+}
+
+.tab-nav .tab-btn i-ui {
+    transition: color 0.25s ease;
+    color: var(--text-muted) !important;
+    /* Inactive is gray */
+}
+
+.tab-nav .tab-btn.active:not(.tab-btn-ai) i-ui {
+    color: #000000 !important;
+    /* Active icon color is black */
+    transform: none !important;
+    /* No zoom/scale animation on click */
+}
+
+[data-theme="dark"] .tab-nav .tab-btn.active:not(.tab-btn-ai) i-ui {
+    color: #ffffff !important;
+    /* Active is white in dark theme */
+}
+
+/* Center AI Button Raised Layout */
+.tab-btn-ai-wrapper {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+    position: relative;
+    height: 100%;
+    overflow: visible;
+    z-index: 1001;
+}
+
+/* Register Houdini properties for premium smooth animated mesh gradient */
+@property --c-0 {
+    syntax: '<color>';
+    inherits: false;
+    initial-value: hsla(190, 100%, 88%, 0.66)
+}
+
+@property --s-start-0 {
+    syntax: '<percentage>';
+    inherits: false;
+    initial-value: 4.038772213247173%
+}
+
+@property --s-end-0 {
+    syntax: '<percentage>';
+    inherits: false;
+    initial-value: 37.2265767974114%
+}
+
+@property --y-0 {
+    syntax: '<percentage>';
+    inherits: false;
+    initial-value: 11%
+}
+
+@property --x-0 {
+    syntax: '<percentage>';
+    inherits: false;
+    initial-value: 91%
+}
+
+@property --c-1 {
+    syntax: '<color>';
+    inherits: false;
+    initial-value: hsla(136, 100%, 88%, 1)
+}
+
+@property --x-1 {
+    syntax: '<percentage>';
+    inherits: false;
+    initial-value: 69.11764778558965%
+}
+
+@property --y-1 {
+    syntax: '<percentage>';
+    inherits: false;
+    initial-value: 54.30547154879501%
+}
+
+@property --s-start-1 {
+    syntax: '<percentage>';
+    inherits: false;
+    initial-value: 3%
+}
+
+@property --s-end-1 {
+    syntax: '<percentage>';
+    inherits: false;
+    initial-value: 56%
+}
+
+@property --c-2 {
+    syntax: '<color>';
+    inherits: false;
+    initial-value: hsla(280, 64%, 64%, 1)
+}
+
+@property --y-2 {
+    syntax: '<percentage>';
+    inherits: false;
+    initial-value: 87%
+}
+
+@property --s-start-2 {
+    syntax: '<percentage>';
+    inherits: false;
+    initial-value: 12.107536057085522%
+}
+
+@property --s-end-2 {
+    syntax: '<percentage>';
+    inherits: false;
+    initial-value: 63.33640956108327%
+}
+
+@property --x-2 {
+    syntax: '<percentage>';
+    inherits: false;
+    initial-value: 36%
+}
+
+/* Mesh animation keyframes */
+@keyframes ani-tab-btn-ai {
+    0% {
+        --c-0: hsla(190, 100%, 88%, 0.66);
+        --s-start-0: 4.038772213247173%;
+        --s-end-0: 37.2265767974114%;
+        --y-0: 11%;
+        --x-0: 91%;
+        --c-1: hsla(136, 100%, 88%, 1);
+        --x-1: 69.11764778558965%;
+        --y-1: 54.30547154879501%;
+        --s-start-1: 3%;
+        --s-end-1: 56%;
+        --c-2: hsla(280, 64%, 64%, 1);
+        --y-2: 87%;
+        --s-start-2: 12.107536057085522%;
+        --s-end-2: 63.33640956108327%;
+        --x-2: 36%;
+    }
+
+    100% {
+        --c-0: hsla(190, 84%, 69%, 0.66);
+        --s-start-0: 3%;
+        --s-end-0: 56%;
+        --y-0: 92%;
+        --x-0: 94%;
+        --c-1: hsla(136, 100%, 72%, 1);
+        --x-1: 53.71148564984649%;
+        --y-1: 40.953546619049796%;
+        --s-start-1: 3%;
+        --s-end-1: 56%;
+        --c-2: hsla(280, 100%, 88%, 1);
+        --y-2: 24.02200177863751%;
+        --s-start-2: 18%;
+        --s-end-2: 56%;
+        --x-2: 28.422618506987362%;
+    }
+}
+
+/* The actual circular button (floating, standing completely alone, with animated mesh gradient) */
+.tab-btn-ai {
+    position: absolute;
+    top: -24px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 66px;
+    height: 66px;
+    border-radius: 50% !important;
+    color: #444444 !important;
+    /* Dark charcoal icon color for high contrast on pastels */
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    border: 1.5px solid var(--bg-card) !important;
+    z-index: 1002;
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    padding: 0 !important;
+    box-sizing: border-box;
+
+    /* Animated Mesh Gradient Styles */
+    --c-0: hsla(190, 100%, 88%, 0.66);
+    --y-0: 11%;
+    --x-0: 91%;
+    --c-1: hsla(136, 100%, 88%, 1);
+    --x-1: 69.11764778558965%;
+    --y-1: 54.30547154879501%;
+    --c-2: hsla(280, 64%, 64%, 1);
+    --y-2: 87%;
+    --x-2: 36%;
+    background-color: hsla(0, 0%, 100%, 0.77) !important;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 623 623' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E"), radial-gradient(circle at var(--x-0) var(--y-0), var(--c-0) var(--s-start-0), transparent var(--s-end-0)), radial-gradient(circle at var(--x-1) var(--y-1), var(--c-1) var(--s-start-1), transparent var(--s-end-1)), radial-gradient(circle at var(--x-2) var(--y-2), var(--c-2) var(--s-start-2), transparent var(--s-end-2)) !important;
+    animation: ani-tab-btn-ai 2s linear infinite alternate;
+    background-blend-mode: overlay, normal, normal, normal;
+    will-change: transform, opacity;
+    contain: paint;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Active AI center button - faster animation (0.8s) & 20% dimmer (brightness(0.8)) */
+.tab-btn-ai.active {
+    animation: ani-tab-btn-ai 0.8s linear infinite alternate !important;
+    /* 2.5x faster animation speed */
+    /* Dimmed by exactly 20% */
+    transform: translateX(-50%) scale(1.08) translateY(-3px);
+}
+
+.tab-btn-ai i-ui {
+    color: #444444 !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.tab-btn-ai.active i-ui {
+    color: #111111 !important;
+}
+
+/* ============================================
+   MAIN CONTENT AREA
+   ============================================ */
+#app-content {
+    flex: 1;
+    padding: var(--spacing-md);
+    padding-bottom: 80px;
+    max-width: 600px;
+    margin: 0 auto;
+    width: 100%;
+}
+
+/* History view breaks out full-bleed */
+#history-view {
+    margin-left: calc(-1 * var(--spacing-md));
+    margin-right: calc(-1 * var(--spacing-md));
+}
+
+/* ============================================
+   FOOTER
+   ============================================ */
+.app-footer {
+    text-align: center;
+    padding: var(--spacing-lg);
+    background: #333;
+    color: #fff;
+    margin-top: auto;
+    font-size: 0.8rem;
+}
