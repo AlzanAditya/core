@@ -245,13 +245,13 @@ export function DesktopQuickActions() {
   return (
     <div className="flex gap-3">
       <Button asChild>
-        <Link href="/inventory?action=add">
+        <Link href="/admin/inventory?action=add">
           <Plus data-icon="inline-start" />
           Tambah Produk
         </Link>
       </Button>
       <Button asChild variant="outline">
-        <Link href="/transactions">
+        <Link href="/admin/scan">
           <ArrowRightLeft data-icon="inline-start" />
           Lihat Scan
         </Link>
@@ -264,13 +264,13 @@ export function MobileQuickActions() {
   return (
     <div className="flex gap-2">
       <Button asChild size="sm" className="flex-1">
-        <Link href="/inventory?action=add">
+        <Link href="/admin/inventory?action=add">
           <Plus data-icon="inline-start" />
           Produk
         </Link>
       </Button>
       <Button asChild variant="outline" size="sm" className="flex-1">
-        <Link href="/transactions">
+        <Link href="/admin/scan">
           <ArrowRightLeft data-icon="inline-start" />
           Scan
         </Link>

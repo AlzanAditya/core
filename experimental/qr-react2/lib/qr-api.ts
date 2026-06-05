@@ -49,6 +49,25 @@ export interface ScanLog {
   products?: { nama_produk: string | null } | null
 }
 
+export interface InventoryTransaction {
+  id: number
+  nomor_seri: string
+  type: "masuk" | "keluar"
+  quantity: number
+  operator: string | null
+  notes: string | null
+  created_at: string | null
+  products?: { nama_produk: string | null } | null
+}
+
+export interface InventoryTransactionFormData {
+  nomor_seri: string
+  type: "masuk" | "keluar"
+  quantity: string
+  operator: string
+  notes: string
+}
+
 export interface PaginatedResult<T> {
   data: T[]
   count: number
@@ -68,6 +87,14 @@ export const emptyProductForm: ProductFormData = {
   hard_fuse_protection: "",
   ground_output: "",
   tambahan_optional: "",
+}
+
+export const emptyTransactionForm: InventoryTransactionFormData = {
+  nomor_seri: "",
+  type: "masuk",
+  quantity: "",
+  operator: "",
+  notes: "",
 }
 
 const PROJECT_REF = new URL(QR_CONFIG.SUPABASE_URL).hostname.split(".")[0]
@@ -90,6 +117,16 @@ function getStoredAccessToken() {
   }
 
   return null
+}
+
+function storeSupabaseSession(session: Record<string, unknown>) {
+  if (typeof window === "undefined") return
+  localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(session))
+}
+
+export function clearSupabaseSession() {
+  if (typeof window === "undefined") return
+  localStorage.removeItem(AUTH_STORAGE_KEY)
 }
 
 async function parseResponse<T>(res: Response): Promise<T> {
@@ -155,6 +192,11 @@ export async function getAllProducts() {
   return result.data
 }
 
+export async function getProduct(nomorSeri: string) {
+  const result = await workerFetch<Product>(`/products/${encodeURIComponent(nomorSeri)}`)
+  return result.data
+}
+
 export async function createProduct(data: ProductFormData) {
   const result = await workerFetch<Product>("/products", {
     method: "POST",
@@ -187,6 +229,115 @@ export async function getScanLogs({ page = 1, pageSize = 10, search = "" } = {})
 export async function getAllScanLogs() {
   const result = await supabaseRest<ScanLog[]>("/scan_logs?select=*,products(nama_produk)&order=scanned_at.desc&limit=1000", {}, true)
   return result.data
+}
+
+export async function getTransactions({ page = 1, pageSize = 10, search = "" } = {}) {
+  const offset = (page - 1) * pageSize
+  const q = search.trim()
+  const filter = q ? `&nomor_seri=ilike.*${encodeURIComponent(q)}*` : ""
+  const result = await supabaseRest<InventoryTransaction[]>(
+    `/transactions?select=*,products(nama_produk)&order=created_at.desc&limit=${pageSize}&offset=${offset}${filter}`,
+    {},
+    true,
+  )
+  return { data: result.data, count: result.count }
+}
+
+export async function createTransaction(data: InventoryTransactionFormData) {
+  const payload = {
+    nomor_seri: data.nomor_seri,
+    type: data.type,
+    quantity: Number(data.quantity || 0),
+    operator: data.operator.trim() || null,
+    notes: data.notes.trim() || null,
+  }
+  const result = await supabaseRest<InventoryTransaction[]>(
+    "/transactions",
+    {
+      method: "POST",
+      headers: { Prefer: "return=representation" },
+      body: JSON.stringify(payload),
+    },
+    true,
+  )
+  return result.data[0]
+}
+
+export async function loginWithPassword(email: string, password: string) {
+  const res = await fetch(`${QR_CONFIG.SUPABASE_URL}/auth/v1/token?grant_type=password`, {
+    method: "POST",
+    headers: {
+      apikey: QR_CONFIG.SUPABASE_ANON_KEY,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ email, password }),
+  })
+  const session = await parseResponse<Record<string, unknown>>(res)
+  const user = session.user as { id?: string; email?: string } | undefined
+  if (!user?.id) throw new Error("Login gagal.")
+
+  const adminRes = await fetch(`${QR_CONFIG.SUPABASE_URL}/rest/v1/admins?id=eq.${user.id}&select=role,email`, {
+    headers: {
+      apikey: QR_CONFIG.SUPABASE_ANON_KEY,
+      Authorization: `Bearer ${session.access_token}`,
+    },
+  })
+  const admins = await parseResponse<Array<{ role: string; email: string }>>(adminRes)
+  if (!admins.length) throw new Error("Akun ini tidak memiliki akses admin.")
+
+  storeSupabaseSession({
+    ...session,
+    user,
+    currentSession: session,
+    expires_at: session.expires_at || Math.floor(Date.now() / 1000) + Number(session.expires_in || 3600),
+  })
+
+  return { user, role: admins[0].role, email: admins[0].email || user.email || email }
+}
+
+export function signInWithGoogle(redirectTo?: string) {
+  const url = new URL(`${QR_CONFIG.SUPABASE_URL}/auth/v1/authorize`)
+  url.searchParams.set("provider", "google")
+  url.searchParams.set("redirect_to", redirectTo || `${window.location.origin}/admin/login`)
+  window.location.href = url.toString()
+}
+
+export async function persistOAuthHashSession() {
+  if (typeof window === "undefined" || !window.location.hash.includes("access_token")) return false
+
+  const params = new URLSearchParams(window.location.hash.slice(1))
+  const accessToken = params.get("access_token")
+  const refreshToken = params.get("refresh_token")
+  const expiresIn = Number(params.get("expires_in") || 3600)
+  if (!accessToken) return false
+
+  const userRes = await fetch(`${QR_CONFIG.SUPABASE_URL}/auth/v1/user`, {
+    headers: {
+      apikey: QR_CONFIG.SUPABASE_ANON_KEY,
+      Authorization: `Bearer ${accessToken}`,
+    },
+  })
+  const user = await parseResponse<{ id: string; email?: string }>(userRes)
+  const adminRes = await fetch(`${QR_CONFIG.SUPABASE_URL}/rest/v1/admins?id=eq.${user.id}&select=role,email`, {
+    headers: {
+      apikey: QR_CONFIG.SUPABASE_ANON_KEY,
+      Authorization: `Bearer ${accessToken}`,
+    },
+  })
+  const admins = await parseResponse<Array<{ role: string; email: string }>>(adminRes)
+  if (!admins.length) throw new Error("Akun Google ini tidak memiliki akses admin.")
+
+  const session = {
+    access_token: accessToken,
+    refresh_token: refreshToken,
+    token_type: params.get("token_type") || "bearer",
+    expires_in: expiresIn,
+    expires_at: Math.floor(Date.now() / 1000) + expiresIn,
+    user,
+  }
+  storeSupabaseSession({ ...session, currentSession: session })
+  window.history.replaceState(null, "", window.location.pathname)
+  return true
 }
 
 export function getProductPublicUrl(nomorSeri: string) {

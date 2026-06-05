@@ -4,19 +4,19 @@ import { ReactNode } from "react"
 import Link from "next/link"
 import Image from "next/image"
 import { usePathname } from "next/navigation"
-import { Bell, Search, User, LayoutDashboard, Package, QrCode, ArrowLeftRight, ImageIcon, Settings } from "lucide-react"
+import { Bell, Search, User, LayoutDashboard, Package, QrCode, ArrowLeftRight, ScanLine, Settings } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { cn } from "@/lib/utils"
 
 const menuItems = [
-  { title: "Dashboard", href: "/", icon: LayoutDashboard },
-  { title: "Produk", href: "/inventory", icon: Package },
-  { title: "QR", href: "/qr", icon: QrCode },
-  { title: "Transaksi", href: "/transactions", icon: ArrowLeftRight },
-  { title: "Images", href: "/images", icon: ImageIcon },
-  { title: "Setting", href: "/settings", icon: Settings },
+  { title: "Dashboard", href: "/admin", icon: LayoutDashboard },
+  { title: "Produk", href: "/admin/inventory", icon: Package },
+  { title: "QR", href: "/admin/qr", icon: QrCode },
+  { title: "Scan", href: "/admin/scan", icon: ScanLine },
+  { title: "Transaksi", href: "/admin/transactions", icon: ArrowLeftRight },
+  { title: "Setting", href: "/admin/settings", icon: Settings },
 ]
 
 interface MobileLayoutProps {
@@ -101,7 +101,7 @@ export function MobileLayout({ children, title, subtitle, actions, showSearch = 
                   isActive ? "text-primary" : "text-muted-foreground"
                 )}
               >
-                <item.icon className={cn("h-4 w-4", isActive && "text-primary")} />
+                <item.icon className={cn("h-5 w-6", isActive && "text-primary")} />
                 <span className="truncate">{item.title}</span>
               </Link>
             )

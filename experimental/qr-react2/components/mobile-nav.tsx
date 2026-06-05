@@ -7,7 +7,7 @@ import {
   Package,
   QrCode,
   ArrowLeftRight,
-  ImageIcon,
+  ScanLine,
   Settings,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
@@ -15,32 +15,32 @@ import { cn } from "@/lib/utils"
 const menuItems = [
   {
     title: "Dashboard",
-    href: "/",
+    href: "/admin",
     icon: LayoutDashboard,
   },
   {
     title: "Produk",
-    href: "/inventory",
+    href: "/admin/inventory",
     icon: Package,
   },
   {
     title: "QR",
-    href: "/qr",
+    href: "/admin/qr",
     icon: QrCode,
   },
   {
+    title: "Scan",
+    href: "/admin/scan",
+    icon: ScanLine,
+  },
+  {
     title: "Transaksi",
-    href: "/transactions",
+    href: "/admin/transactions",
     icon: ArrowLeftRight,
   },
   {
-    title: "Images",
-    href: "/images",
-    icon: ImageIcon,
-  },
-  {
     title: "Setting",
-    href: "/settings",
+    href: "/admin/settings",
     icon: Settings,
   },
 ]
