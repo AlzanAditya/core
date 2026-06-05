@@ -3,7 +3,7 @@ self.__BUILD_MANIFEST = {
     "afterFiles": [],
     "beforeFiles": [
       {
-        "source": "/apps/qrreact/_next/:path+",
+        "source": "/apps/qr2/_next/:path+",
         "destination": "/_next/:path+"
       }
     ],
